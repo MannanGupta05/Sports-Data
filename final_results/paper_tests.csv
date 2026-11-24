@@ -1,0 +1,3 @@
+method,unit,contrast,estimate,standard_error,ci_low,ci_high,p_value,left_at_50,right_at_50,percent_jump,observations,total_dismissals,bandwidth_runs,bin_width_runs,match_clusters,minimum_final_score
+McCrary test on final dismissal scores,log density ratio,right minus left at 50,0.9338329334859514,0.1800553810117292,0.5809308714803251,1.2867349954915777,2.1443829164496583e-07,0.002814738996929376,0.007161378369157281,154.42424242424227,733,14655.0,5,1.0,,
+Triangular local-linear strike-rate comparison,runs per legal ball,right minus left at 50,0.35042326781898436,0.13188916050638563,0.09137617424770633,0.6094703613902623,0.00810565345578919,1.526355693527397,1.8767789613463814,22.958165603533654,3742,,5,,572.0,70.0

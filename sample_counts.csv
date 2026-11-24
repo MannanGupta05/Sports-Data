@@ -1,0 +1,5 @@
+﻿sample,side,score_min,score_max,matches,batter_innings,deliveries,striker_dismissals
+all,pre,44,49,1132,2613,8311,425
+all,post,50,55,1036,2045,6178,405
+eligible_chases,pre,44,49,897,1219,3937,200
+eligible_chases,post,50,55,758,942,2973,173

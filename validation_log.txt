@@ -1,0 +1,19 @@
+Passed all packaged IPL scorecard and delivery checks.
+
+Starting score windows: 44-49 vs 50-55
+
+Archive and sample audit
+match_files: 1,243
+innings: 2,514
+deliveries: 295,732
+legal_deliveries: 284,630
+regulation_legal_deliveries: 284,465
+eligible_chase_deliveries: 139,457
+eligible_chase_legal_deliveries: 134,264
+
+Chase eligibility by match
+adjusted_or_no_result: 26
+eligible: 1,197
+miscounted_overs: 4
+no_second_innings: 6
+shortened_allocation: 10

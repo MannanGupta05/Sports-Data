@@ -1,0 +1,147 @@
+IPL half-century project | Analysis specification
+
+1. Analysis specification
+The unit of observation is a delivery. The comparison is 44–49 versus
+50–55, using the striker’s score before the delivery. The sample uses legal
+deliveries in regulation innings and includes batters dismissed before 50. Each group is counted
+independently, so a batter-innings can appear on both sides.
+
+The four outcomes share the same legal-delivery denominator.
+- Batter runs are the runs credited to the striker on the delivery.
+- A boundary is a four or six off the bat unless flagged as a non-boundary.
+- A batting dot is zero batter runs. A leg-bye can therefore be a batting dot.
+- A striker dismissal requires a matching player_out. Retired hurt is excluded.
+  Retired out remains a recorded dismissal. The raw wicket kind is retained.
+
+2. Delivery dataset
+The compressed CSV contains every recorded delivery. The key is match_id,
+innings, delivery_sequence. actual_delivery preserves the original cricket
+notation and can repeat. over is numbered from 1. Player IDs are from the
+Cricsheet registry. All fields ending in _before describe the state before
+that delivery. Batter runs on no-balls update the running personal score.
+regulation_legal identifies the rows eligible for the outcome sample.
+The score_window field is pre, post, or blank outside the eligible windows.
+
+3. Validation
+The build checks run balance for every delivery, reconstructs both innings of
+two IPL scorecards and verifies specific examples of repeated labels, wides,
+scoring no-balls, leg-byes, non-striker run-outs, non-boundary fours and a
+dismissal on 47. It also checks the chase opening state, cricket over notation
+and the exclusion of an adjusted chase.
+
+4. Chase urgency
+Use second-innings rows with chase_status=eligible. The chase must have a
+120-ball allocation, an archive target one run above the first-innings total,
+and no recorded adjustment method, no-result outcome or miscounted chase over.
+Required run rate is 6 × runs still needed ÷ legal balls left, measured before
+the delivery. For the outcome sample, also select regulation_legal=1.
+recorded_target_* fields retain the raw archive values for auditing.
+target_runs_at_ball and the urgency fields are populated for eligible chases.
+Revised or shortened chases need target timing verified before being added.
+
+Reproduce with Python 3 using only the standard library
+  python build_ipl_deliveries.py "path\to\ipl_json" "path\to\output_folder"
+
+Files
+  ipl_deliveries.csv.gz           Full delivery dataset, readable as gzip CSV
+  sample_counts.csv              Coverage by score window and sample
+  validated_delivery_examples.csv  Rows demonstrating the validation checks
+  chase_eligibility.csv           One urgency eligibility decision per match
+  validation_log.txt              Archive totals and chase exclusion counts
+
+Sources
+  https://cricsheet.org/format/json/
+  https://www.ipl.com/matches/indian-premier-league-90738/sunrisers-hyderabad-vs-royal-challengers-bangalore-19075/scorecard
+  https://www.iplt20.com/news/article/match-report-m3-gl-vs-kkr
+
+5. Final IPL analysis
+Run with Python 3 and pandas, NumPy, SciPy, statsmodels, and Matplotlib.
+  python -m pip install pandas numpy scipy statsmodels matplotlib
+  python run_final_analysis.py
+
+The script reads ipl_deliveries.csv.gz and creates final_results. Optional
+--deliveries and --output flags allow a different input or output path.
+All planned IPL comparisons use legal regulation deliveries and the fixed
+44–49 and 50–55 groups. Estimates are 44–49 minus 50–55. Binary outcomes are
+reported in percentage points. The raw rows report each group's mean as well.
+
+The adjusted model is OLS with categorical over and wickets remaining.
+For a binary outcome this is a linear probability model. Standard errors
+are clustered by match and tests are two-sided, using match clusters minus
+one as the t degrees of freedom. Tables give pointwise 95% confidence
+intervals, raw p-values and Holm-adjusted p-values across the four outcomes
+within each specification.
+
+The chase model adds pre-delivery required run rate and its interaction with
+the 44–49 group. The interaction is the change in the pre/post gap per
+additional required run per over. Required rate is centered at the chase
+sample median. The chart shows the gap over the overlap of the two groups'
+10th–90th percentile required-rate ranges, with pointwise 95% intervals.
+All eligible chase deliveries in the score windows enter the model.
+
+Robustness adds batter fixed effects, then uses batter-innings fixed effects
+on innings that contribute legal deliveries to both score windows. The
+second check conditions on surviving and being observed in both groups.
+This selection can mechanically favour pre-50 scoring and lower its
+dismissal rate because a batter must pass 50 to enter the paired sample.
+
+The placebo checks repeat the same six-score windows at 40 (34–39 versus
+40–45) and 60 (54–59 versus 60–65). All use legal regulation deliveries,
+with the same raw and adjusted specifications, match-clustered standard
+errors and 95% confidence intervals. The placebo table also includes 50
+for comparison. In the direct tests the null is that the pre-minus-post
+gap at the placebo threshold equals that at 50. Those estimates are fit
+jointly with threshold-specific coefficients, clustering by match to
+account for shared matches and deliveries across windows. Holm-adjusted
+p-values in the direct table cover the eight tests per specification.
+If similar gaps appear at the placebo thresholds, that weakens a claim
+that the observed pattern is specific to reaching 50.
+
+6. Gauriot and Page (2015) half-century methods applied to the IPL
+Figures 1A and 2A are the comparison methods. These estimates are right
+minus left at 50, so their direction is the reverse of the main IPL tables.
+
+- Dismissal density (Figure 1A). Recover the final score of each dismissed
+  batter-innings from the full regulation records, including non-striker
+  dismissals and events on illegal balls. Retired hurt is excluded. Use
+  one-run bins with the threshold as a bin edge, five-run bandwidth and
+  triangular local-linear smoothing on each side. Compare the fitted log
+  densities at 50 using McCrary's asymptotic standard error. The p-value
+  uses the normal approximation, which merits care for integer scores and
+  a small number of bins. This is a test on final dismissal scores, with a
+  different denominator from the IPL per-ball dismissal rate.
+
+- Strike-rate discontinuity (Figure 2A). Keep legal balls from batter-innings
+  that ended on at least 70, as specified in the published figure. Use score
+  before the delivery, separate local linear slopes at 50, triangular
+  weights and a five-run bandwidth. Scores exactly five runs away have
+  zero weight. Plotted points cover the project score windows and only
+positive-weight observations enter the fit. The IPL application uses
+match-clustered uncertainty.
+  Reaching 70 is a condition of the paper comparison only. The main IPL
+  analysis includes innings that end before 50.
+
+The source paper uses ODI data for the batting tests. These scripts apply
+those half-century methods to the supplied IPL data. Its other landmarks
+fall outside the project's half-century scope. The declaration analysis
+uses Test cricket, where a captain can elect to close an innings.
+
+Results
+  batting_comparison.csv             Raw and adjusted IPL estimates
+  chase_urgency_interaction.csv       Tests of whether the gap varies with urgency
+  chase_gaps_by_required_rate.csv     Adjusted gaps at the plotted required rates
+  chase_urgency.png                   Adjusted chase gaps and 95% confidence bands
+  robustness.csv                      Same-batter and same-batter-innings checks
+  placebo_comparison.csv             Raw and adjusted gaps at 40, 50 and 60
+  placebo_gap_differences.csv        Direct tests against the gap at 50
+  paper_tests.csv                     Both half-century comparisons from the paper
+  paper_dismissal_bins.csv            Dismissal counts and density by final score
+  paper_strike_rate_by_score.csv      Legal-ball counts and scoring rates by score
+  paper_dismissal_density.png         Dismissal densities and fitted limits at 50
+  paper_strike_rate.png               Strike rate and fitted limits at 50
+
+References
+  Gauriot and Page (2015), pp. 416–417, Figures 1A and 2A.
+  https://doi.org/10.1257/aer.p20151019
+  McCrary (2008), original DCdensity implementation and documentation.
+  https://eml.berkeley.edu/~jmccrary/DCdensity/

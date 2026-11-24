@@ -1,0 +1,13 @@
+﻿example,match_id,innings,actual_delivery,delivery_sequence,batter,batter_score_before,batter_runs,legal,boundary,batting_dot,striker_dismissed,wickets_on_delivery,score_window,team_score_before,target_runs_at_ball,balls_remaining_before,runs_required_before,required_run_rate_before,chase_status
+Karthik hits four from 43,1082593,1,19.4,120,KD Karthik,43,4,1,1,0,0,0,,175,,,,,not_a_chase
+Karthik dismissed on 47,1082593,1,19.5,121,KD Karthik,47,0,1,0,1,1,1,pre,179,,,,,not_a_chase
+Wide,1082591,1,0.5,5,DA Warner,4,0,0,0,0,0,0,,4,,,,,not_a_chase
+Legal ball with same label,1082591,1,0.5,6,S Dhawan,0,0,1,0,1,0,0,,6,,,,,not_a_chase
+Scoring no-ball,1082591,2,9.1,58,KM Jadhav,13,1,0,0,0,0,0,,85,208,66,123,11.181818181818182,eligible
+Next legal delivery,1082591,2,9.1,59,TM Head,13,4,1,1,0,0,0,,87,208,66,121,11.0,eligible
+Leg-bye,1082591,1,0.6,7,S Dhawan,0,0,1,0,1,0,0,,6,,,,,not_a_chase
+Non-striker run-out,1082591,2,19.4,123,A Choudhary,6,0,1,0,1,0,1,,172,208,3,36,72.0,eligible
+Four runs without a boundary,1082594,2,12.4,81,GJ Maxwell,9,4,1,0,0,0,0,,96,164,45,68,9.066666666666666,eligible
+208-run chase opener,1082591,2,0.1,1,CH Gayle,0,1,1,0,0,0,0,,0,208,120,208,10.4,eligible
+Near-50 delivery in the chase,1082593,2,6.6,44,CA Lynn,49,1,1,0,0,0,0,pre,95,184,79,89,6.7594936708860756,eligible
+Adjusted chase,1082648,2,0.1,1,RV Uthappa,0,1,1,0,0,0,0,,0,,,,,adjusted_or_no_result
